@@ -35,4 +35,4 @@ AllotEase is a web-based application designed to automate the hall allotment and
 ## Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/AllotEase.git
+   git clone https://github.com/yourusername/allot-ease.git
