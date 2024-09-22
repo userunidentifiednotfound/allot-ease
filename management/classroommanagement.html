@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Management</title>
+    <link rel="stylesheet" href="/css/admin-style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #333;
+            padding-top: 30px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            transition: all 0.3s ease;
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+        .button-group {
+            margin-bottom: 20px;
+        }
+        .button-group button {
+            padding: 10px;
+            background-color: #e67e22; /* Orange color */
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-right: 10px;
+            border: none;
+            font-size: 14px;
+        }
+        .button-group button.active {
+            background-color: #d35400; /* Darker orange */
+        }
+        .section { display: none; }
+        .section.active { display: block; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        input, select { width: calc(100% - 20px); padding: 10px; margin-bottom: 10px; }
+        #bookingMessage, #editMessage { color: green; display: none; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+            <li><a href="/admin.html" onclick="showSection('dashboard')">Dashboard</a></li>
+            <li><a href="/management/studentmanagement.html" onclick="showSection('student')">Student Management</a></li>
+            <li><a href="/management/facultymanagement.html" onclick="showSection('faculty')">Faculty Management</a></li>
+            <li><a href="/management/timetablemanagement.html" onclick="showSection('timetable')">Timetable Management</a></li>
+            <li><a href="/management/classroommanagement.html" class="active" onclick="showSection('classroom')">Classroom Management</a></li>
+            <li><a href="/management/labsmanagement.html" onclick="showSection('labs')">Labs Management</a></li>
+            <li><a href="/management/hallallotment.html" onclick="showSection('exam-hall')">Exam Hall Allotment</a></li>
+            <li><a href="/management/result.html" onclick="showSection('exam-result')">Exam Result Management</a></li>
+            <li><a href="/management/projects.html" onclick="showSection('projects')">Projects Management</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="button-group">
+            <button onclick="showSection('addClassroomSection')" class="active">Add Classroom</button>
+            <button onclick="showSection('manageClassroomSection')">Manage Classroom</button>
+            <button onclick="showSection('classroomListSection')">Classroom List</button>
+            <button onclick="showSection('bookHallSection')">Book Hall</button>
+            <button onclick="showSection('hallBookingScheduleSection')">Show Hall Booking Schedule</button>
+        </div>
+
+        <!-- Add Classroom Section -->
+        <div id="addClassroomSection" class="section active">
+            <h2>Add Classroom</h2>
+            <form id="addClassroomForm">
+                <input type="text" id="classroomName" placeholder="Classroom Name/Number" required>
+                <select id="classroomFloor" required>
+                    <option value="">Select Floor</option>
+                    <option value="1">1st Floor</option>
+                    <option value="2">2nd Floor</option>
+                    <option value="3">3rd Floor</option>
+                    <option value="4">4th Floor</option>
+                    <option value="5">5th Floor</option>
+                    <option value="6">6th Floor</option>
+                    <option value="7">7th Floor</option>
+                    <option value="8">8th Floor</option>
+                    <option value="9">9th Floor</option>
+                    <option value="10">10th Floor</option>
+                </select>
+                <input type="number" id="classroomCapacity" placeholder="Capacity (Max 70)" max="70" required>
+                <input type="text" id="classroomType" placeholder="Type (e.g., Lecture, Seminar)" required>
+                <button type="submit">Add Classroom</button>
+            </form>
+            <div id="addClassroomMessage">
+              <!--  <p>Classroom added successfully!</p> -->
+            </div>
+        </div>
+
+        <!-- Manage Classroom Section -->
+        <div id="manageClassroomSection" class="section">
+            <h2>Manage Classroom</h2>
+            <form id="manageClassroomForm">
+                <input type="text" id="manageClassroomName" placeholder="Enter Classroom Name/Number" required>
+                <button type="button" onclick="findClassroomToEdit()">Find Classroom</button>
+            </form>
+            <div id="manageClassroomDetails" style="display: none;">
+                <h3>Edit Classroom Details</h3>
+                <form id="editClassroomForm">
+                    <input type="text" id="editClassroomName" placeholder="Classroom Name/Number" required>
+                    <select id="editClassroomFloor" required>
+                        <option value="">Select Floor</option>
+                        <option value="1">1st Floor</option>
+                        <option value="2">2nd Floor</option>
+                        <option value="3">3rd Floor</option>
+                        <option value="4">4th Floor</option>
+                        <option value="5">5th Floor</option>
+                        <option value="6">6th Floor</option>
+                        <option value="7">7th Floor</option>
+                        <option value="8">8th Floor</option>
+                        <option value="9">9th Floor</option>
+                        <option value="10">10th Floor</option>
+                    </select>
+                    <input type="number" id="editClassroomCapacity" placeholder="Capacity" max="70" required>
+                    <input type="text" id="editClassroomType" placeholder="Type" required>
+                    <button type="submit">Update Classroom</button>
+                </form>
+                <div id="editMessage">
+                    <p>Classroom updated successfully!</p>
+                </div>
+            </div>
+            <div id="manageNoResult" style="display: none; color: red;">
+                <p>No classroom found with the given details.</p>
+            </div>
+        </div>
+
+        <!-- Classroom List Section -->
+        <div id="classroomListSection" class="section">
+            <h2>Classroom List</h2>
+            <table id="classroomTable">
+                <thead>
+                    <tr>
+                        <th>Name/Number</th>
+                        <th>Floor</th>
+                        <th>Capacity</th>
+                        <th>Type</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Classroom list rows will be appended here dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Book Hall Section -->
+        <div id="bookHallSection" class="section">
+            <h2>Book Hall</h2>
+            <form id="bookHallForm">
+                <input type="text" id="programName" placeholder="Program Name" required>
+                <input type="date" id="bookingDate" required>
+                <input type="time" id="bookingTime" required>
+                <input type="text" id="bookingDepartment" placeholder="Department" required>
+                <input type="text" id="facultyInCharge" placeholder="Faculty In Charge" required>
+                <select id="programType" required>
+                    <option value="">Select Type of Program</option>
+                    <option value="guest_lecture">Guest Lecture</option>
+                    <option value="seminar">Seminar</option>
+                    <option value="workshop">Workshop</option>
+                    <option value="class">Class</option>
+                    <option value="other">Other</option>
+                </select>
+                <button type="submit">Book Hall</button>
+            </form>
+            <div id="bookingMessage">
+                <p>Hall booked successfully!</p>
+            </div>
+        </div>
+
+        <!-- Hall Booking Schedule Section -->
+        <div id="hallBookingScheduleSection" class="section">
+            <h2>Hall Booking Schedule</h2>
+            <table id="hallBookingTable">
+                <thead>
+                    <tr>
+                        <th>Program Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Department</th>
+                        <th>Faculty In Charge</th>
+                        <th>Type of Program</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                    <!-- Hall booking list rows will be appended here dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Local storage arrays for classrooms and hall bookings
+        var classroomData = [];
+        var hallBookingData = [];
+
+        // Function to toggle between sections
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(function(section) {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Function to add a new classroom
+        document.getElementById('addClassroomForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var classroom = {
+                name: document.getElementById('classroomName').value,
+                floor: document.getElementById('classroomFloor').value,
+                capacity: document.getElementById('classroomCapacity').value,
+                type: document.getElementById('classroomType').value
+            };
+            classroomData.push(classroom);
+            saveClassroomData();
+
+            addClassroomToTable(classroom);
+            document.getElementById('addClassroomForm').reset();
+            document.getElementById('addClassroomMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('addClassroomMessage').style.display = 'none';
+            }, 2000);
+        });
+
+        // Function to add classroom row to the table
+        function addClassroomToTable(classroom) {
+            var newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${classroom.name}</td>
+                <td>${classroom.floor}</td>
+                <td>${classroom.capacity}</td>
+                <td>${classroom.type}</td>
+            `;
+            document.querySelector('#classroomTable tbody').appendChild(newRow);
+        }
+
+        // Function to find classroom to edit
+        function findClassroomToEdit() {
+            var classroomName = document.getElementById('manageClassroomName').value;
+            var classroom = classroomData.find(c => c.name === classroomName);
+
+            if (classroom) {
+                document.getElementById('editClassroomName').value = classroom.name;
+                document.getElementById('editClassroomFloor').value = classroom.floor;
+                document.getElementById('editClassroomCapacity').value = classroom.capacity;
+                document.getElementById('editClassroomType').value = classroom.type;
+
+                document.getElementById('manageClassroomDetails').style.display = 'block';
+                document.getElementById('manageNoResult').style.display = 'none';
+            } else {
+                document.getElementById('manageNoResult').style.display = 'block';
+                document.getElementById('manageClassroomDetails').style.display = 'none';
+            }
+        }
+
+        // Function to update classroom details
+        document.getElementById('editClassroomForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var classroomName = document.getElementById('editClassroomName').value;
+
+            // Find and update the classroom
+            var classroomIndex = classroomData.findIndex(c => c.name === classroomName);
+            if (classroomIndex !== -1) {
+                classroomData[classroomIndex] = {
+                    name: classroomName,
+                    floor: document.getElementById('editClassroomFloor').value,
+                    capacity: document.getElementById('editClassroomCapacity').value,
+                    type: document.getElementById('editClassroomType').value
+                };
+                saveClassroomData();
+                document.getElementById('editMessage').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('editMessage').style.display = 'none';
+                }, 2000);
+            }
+        });
+
+        // Function to save classroom data to local storage
+        function saveClassroomData() {
+            localStorage.setItem('classroomData', JSON.stringify(classroomData));
+        }
+
+        // Function to load classroom data on page load
+        function loadClassroomData() {
+            var storedData = localStorage.getItem('classroomData');
+            if (storedData) {
+                classroomData = JSON.parse(storedData);
+                classroomData.forEach(addClassroomToTable);
+            }
+        }
+        // Function to add classroom row to the table
+function addClassroomToTable(classroom) {
+    var newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>${classroom.name}</td>
+        <td>${classroom.floor}</td>
+        <td>${classroom.capacity}</td>
+        <td>${classroom.type}</td>
+        <td><button onclick="deleteClassroom('${classroom.name}')">Delete</button></td>
+    `;
+    document.querySelector('#classroomTable tbody').appendChild(newRow);
+}
+// Function to delete a classroom
+function deleteClassroom(classroomName) {
+    classroomData = classroomData.filter(c => c.name !== classroomName);
+    saveClassroomData();
+    loadClassroomData(); // Refresh the classroom table
+}
+
+
+        // Function to book a hall
+        document.getElementById('bookHallForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var booking = {
+                programName: document.getElementById('programName').value,
+                date: document.getElementById('bookingDate').value,
+                time: document.getElementById('bookingTime').value,
+                department: document.getElementById('bookingDepartment').value,
+                facultyInCharge: document.getElementById('facultyInCharge').value,
+                programType: document.getElementById('programType').value
+            };
+            hallBookingData.push(booking);
+            saveHallBookingData();
+            addHallBookingToTable(booking);
+            document.getElementById('bookHallForm').reset();
+            document.getElementById('bookingMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('bookingMessage').style.display = 'none';
+            }, 2000);
+        });
+
+// Function to add hall booking row to the table
+function addHallBookingToTable(booking) {
+    var newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>${booking.programName}</td>
+        <td>${booking.date}</td>
+        <td>${booking.time}</td>
+        <td>${booking.department}</td>
+        <td>${booking.facultyInCharge}</td>
+        <td>${booking.programType}</td>
+        <td><button onclick="deleteHallBooking('${booking.programName}')">Delete</button></td>
+    `;
+    document.querySelector('#hallBookingTable tbody').appendChild(newRow);
+}
+
+// Function to delete a hall booking
+function deleteHallBooking(programName) {
+    hallBookingData = hallBookingData.filter(b => b.programName !== programName);
+    saveHallBookingData();
+    loadHallBookingData(); // Refresh the hall booking table
+}
+
+        // Function to save hall booking data to local storage
+        function saveHallBookingData() {
+            localStorage.setItem('hallBookingData', JSON.stringify(hallBookingData));
+        }
+
+        // Function to load hall booking data on page load
+        function loadHallBookingData() {
+            var storedData = localStorage.getItem('hallBookingData');
+            if (storedData) {
+                hallBookingData = JSON.parse(storedData);
+                hallBookingData.forEach(addHallBookingToTable);
+            }
+        }
+
+        // Load classroom and hall booking data when the page is loaded
+        window.onload = function() {
+            loadClassroomData();
+            loadHallBookingData();
+        };
+    </script>
+</body>
+</html>

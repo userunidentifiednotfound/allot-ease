@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Faculty Management</title>
+    <link rel="stylesheet" href="/css/admin-style.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* Basic styles for the form and table */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h2, h3 {
+            color: #333;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .button-group button {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .button-group button.active {
+            background: #2980b9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #addFacultyMessage {
+            color: green;
+            display: none;
+        }
+        #updateMessage, #facultyNoResult {
+            margin-top: 15px;
+        }
+        #updateMessage {
+            color: green;
+        }
+        #facultyNoResult {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+            <li><a href="/admin.html" onclick="showSection('dashboard')">Dashboard</a></li>
+            <li><a href="/management/studentmanagement.html"  onclick="showSection('student')">Student Management</a></li>
+            <li><a href="/management/facultymanagement.html" class="active" onclick="showSection('faculty')">Faculty Management</a></li>
+            <li><a href="/management/timetablemanagement.html" onclick="showSection('timetable')">Timetable Management</a></li>
+            <li><a href="/management/classroommanagement.html" onclick="showSection('classroom')">Classroom Management</a></li>
+            <li><a href="/management/labsmanagement.html" onclick="showSection('labs')">Labs Management</a></li>
+            <li><a href="/management/hallallotment.html" onclick="showSection('exam-hall')">Exam Hall Allotment</a></li>
+            <li><a href="/management/result.html" onclick="showSection('exam-result')">Exam Result Management</a></li>
+            <li><a href="/management/projects.html" onclick="showSection('projects')">Projects Management</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <!-- Buttons for toggling between sections -->
+        <div class="button-group">
+            <button onclick="showSection('addFacultySection')" class="active">Add Faculty</button>
+            <button onclick="showSection('facultyListSection')">Faculty List</button>
+        </div>
+
+        <!-- Add Faculty Section -->
+        <div id="addFacultySection" class="section active">
+            <h2>Add Faculty</h2>
+            <form id="addFacultyForm">
+                <label for="facultyName">Name:</label>
+                <input type="text" id="facultyName" name="facultyName" placeholder="Enter faculty name" required>
+                
+                <label for="facultyEmail">Email ID:</label>
+                <input type="email" id="facultyEmail" name="facultyEmail" placeholder="Enter faculty email" required>
+                
+                <label for="facultyMobile">Mobile Number:</label>
+                <input type="text" id="facultyMobile" name="facultyMobile" placeholder="Enter mobile number" required>
+                
+                <label for="facultyDepartment">Department:</label>
+                <input type="text" id="facultyDepartment" name="facultyDepartment" placeholder="Enter department" required>
+                
+                <label for="facultySubject">Subject:</label>
+                <input type="text" id="facultySubject" name="facultySubject" placeholder="Enter subject they teach" required>
+                
+                <label for="facultyType">Faculty Type:</label>
+                <select id="facultyType" name="facultyType" required>
+                    <option value="hod">HOD</option>
+                    <option value="professor">Professor</option>
+                    <option value="asst_professor">Assistant Professor</option>
+                    <option value="jr_professor">Junior Professor</option>
+                </select>
+                <button type="submit">Add Faculty</button>
+            </form>
+            <div id="addFacultyMessage">
+                <p>Faculty added successfully!</p>
+            </div>
+        </div>
+
+        <!-- Faculty List Section -->
+        <div id="facultyListSection" class="section">
+            <h2>Faculty List</h2>
+            <table id="facultyTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Department</th>
+                        <th>Subject</th>
+                        <th>Type</th>
+                        <th>Timetable</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Faculty list rows will be appended here dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Edit Faculty Form (Hidden initially) -->
+        <div id="editFacultySection" class="section">
+            <h2>Edit Faculty</h2>
+            <form id="editFacultyForm">
+                <label for="editFacultySearch">Enter Faculty Email to Edit:</label>
+                <input type="email" id="editFacultySearch" name="editFacultySearch" placeholder="Enter faculty email to search" required>
+                <button type="button" onclick="findFacultyToEdit()">Find Faculty</button>
+            </form>
+
+            <!-- Faculty Details for Editing -->
+            <div id="facultyEditDetails" style="display: none;">
+                <h3>Edit Faculty Details</h3>
+                <form id="updateFacultyForm">
+                    <input type="text" id="editFacultyName" placeholder="Name" required>
+                    <input type="email" id="editFacultyEmail" placeholder="Email ID" required>
+                    <input type="text" id="editFacultyMobile" placeholder="Mobile" required>
+                    <input type="text" id="editFacultyDepartment" placeholder="Department" required>
+                    <input type="text" id="editFacultySubject" placeholder="Subject" required>
+                    <select id="editFacultyType" required>
+                        <option value="hod">HOD</option>
+                        <option value="professor">Professor</option>
+                        <option value="asst_professor">Assistant Professor</option>
+                        <option value="jr_professor">Junior Professor</option>
+                    </select>
+                    <button type="submit">Update Faculty</button>
+                </form>
+
+                <div id="updateMessage" style="color: green; display: none;">
+                    <p>Faculty details updated successfully!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message in case faculty not found -->
+        <div id="facultyNoResult" style="display: none; color: red;">
+            <p>No faculty found with the given details.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript for adding and managing faculty -->
+    <script>
+        var facultyData = [];
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(function(section) {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        document.getElementById('addFacultyForm').addEventListener('submit', function(event) {
+            event.preventDefault();  
+
+            var facultyName = document.getElementById('facultyName').value;
+            var facultyEmail = document.getElementById('facultyEmail').value;
+            var facultyMobile = document.getElementById('facultyMobile').value;
+            var facultyDepartment = document.getElementById('facultyDepartment').value;
+            var facultySubject = document.getElementById('facultySubject').value;
+            var facultyType = document.getElementById('facultyType').value;
+
+            var faculty = {
+                name: facultyName,
+                email: facultyEmail,
+                mobile: facultyMobile,
+                department: facultyDepartment,
+                subject: facultySubject,
+                type: facultyType
+            };
+            facultyData.push(faculty);
+            saveFacultyData();  
+
+            addFacultyToTable(faculty);
+            document.getElementById('addFacultyForm').reset();
+
+            document.getElementById('addFacultyMessage').style.display = 'block';
+            setTimeout(function() {
+                document.getElementById('addFacultyMessage').style.display = 'none';
+            }, 2000);
+        });
+
+        function addFacultyToTable(faculty) {
+            var newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${faculty.name}</td>
+                <td>${faculty.email}</td>
+                <td>${faculty.mobile}</td>
+                <td>${faculty.department}</td>
+                <td>${faculty.subject}</td>
+                <td>${faculty.type}</td>
+                <td><button onclick="showTimetable('${faculty.name}Timetable')">View Timetable</button></td>
+                <td><button onclick="deleteFaculty('${faculty.email}')">Delete</button></td>
+            `;
+            document.querySelector('#facultyTable tbody').appendChild(newRow);
+        }
+
+        function saveFacultyData() {
+            localStorage.setItem('facultyData', JSON.stringify(facultyData));
+        }
+
+        function loadFacultyData() {
+            var storedData = localStorage.getItem('facultyData');
+            if (storedData) {
+                facultyData = JSON.parse(storedData);
+                facultyData.forEach(function(faculty) {
+                    addFacultyToTable(faculty);
+                });
+            }
+        }
+
+        window.onload = function() {
+            loadFacultyData();
+        };
+
+        function deleteFaculty(facultyEmail) {
+            facultyData = facultyData.filter(function(faculty) {
+                return faculty.email !== facultyEmail;
+            });
+            saveFacultyData();
+            document.querySelector('#facultyTable tbody').innerHTML = '';
+            loadFacultyData();
+        }
+
+        function findFacultyToEdit() {
+            var searchEmail = document.getElementById('editFacultySearch').value;
+            var faculty = facultyData.find(faculty => faculty.email === searchEmail);
+            if (faculty) {
+                document.getElementById('facultyEditDetails').style.display = 'block';
+                document.getElementById('editFacultyName').value = faculty.name;
+                document.getElementById('editFacultyEmail').value = faculty.email;
+                document.getElementById('editFacultyMobile').value = faculty.mobile;
+                document.getElementById('editFacultyDepartment').value = faculty.department;
+                document.getElementById('editFacultySubject').value = faculty.subject;
+                document.getElementById('editFacultyType').value = faculty.type;
+            } else {
+                document.getElementById('facultyNoResult').style.display = 'block';
+            }
+        }
+
+    </script>
+</body>
+</html>

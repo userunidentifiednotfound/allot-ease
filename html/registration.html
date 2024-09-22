@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allot-Ease - Student Registration</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+   
+    </style>
+</head>
+<body>
+
+
+    <nav>
+        <div class="logo">Allot-Ease</div>
+        <ul>
+           <li><a href="#">Home</a></li>
+           <li><a href="#">About</a></li>
+           <li><a href="#">Contact</a></li>
+           <li><a href="/index.html">Login</a></li>
+           
+        </ul>
+     </nav>
+
+    <!-- Registration Form -->
+    <div class="form-container">
+        <h1>Registration</h1>
+        <form action="/php/registration.php" method="post" enctype="multipart/form-data">
+            <div class="input-group">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+            </div>
+            <div class="input-group">
+                <label for="middleName">Middle Name:</label>
+                <input type="text" id="middleName" name="middleName" placeholder="Enter your middle name">
+            </div>
+            <div class="input-group">
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+            </div>
+            <div class="input-group">
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" required>
+            </div>
+            <div class="input-group">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="">Select gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="course">Course Enrolled:</label>
+                <select id="course" name="course" required>
+                    <option value="">Select course</option>
+                    <option value="Computer Science and Engineering">Computer Science and Engineering</option>
+                    <option value="Computer Science and Engineering with Artificial Intelligence and Data Science">Computer Science and Engineering - Artificial Intelligence and Data Science</option>
+                    <option value="Computer Science and Engineering with Artificial Intelligence and Machine Learning">Computer Science and Engineering - Artificial Intelligence and Machine Learning</option>
+                    <option value="Computer Science and Engineering with Cyber Security">Computer Science and Engineering - Cyber Security</option>
+                    <option value="Computer Science and Engineering with IOT">Computer Science and Engineering with IOT</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Electronics and Communication Engineering">Electronics and Communication Engineering</option>
+                    <option value="Electronics and Electrical Engineering">Electronics and Electrical Engineering</option>
+                    <option value="Bio-Medical Engineering">Bio-Medical Engineering</option>
+                    <option value="Bio-Technology Engineering">Bio-Technology Engineering</option>
+                    <option value="Agricultural Engineering">Agricultural Engineering</option>
+                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                    <option value="Food Technology">Food Technology</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="fatherName">Father's Name:</label>
+                <input type="text" id="fatherName" name="fatherName" placeholder="Enter your father's name" required>
+            </div>
+            <div class="input-group">
+                <label for="motherName">Mother's Name:</label>
+                <input type="text" id="motherName" name="motherName" placeholder="Enter your mother's name" required>
+            </div>
+            <div class="input-group">
+                <label for="aadharPart1">Aadhar Number:</label>
+                <div class="aadhar-container">
+                    <input type="text" id="aadharPart1" name="aadharPart1" maxlength="4" placeholder="XXXX" required>
+                    <input type="text" id="aadharPart2" name="aadharPart2" maxlength="4" placeholder="XXXX" required>
+                    <input type="text" id="aadharPart3" name="aadharPart3" maxlength="4" placeholder="XXXX" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="input-group">
+                <label for="mobileNumber">Mobile Number:</label>
+                <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="Enter your mobile number" required>
+            </div>
+            <div class="input-group">
+                <label for="photo">Upload Professional Photograph:</label>
+                <input type="file" id="photo" name="photo" accept="image/*" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+
+        <div class="login-container">
+            <p>Already have an account? <a href="/index.html">Login</a></p>
+        </div>
+    </div>
+
+</body>
+</html>
