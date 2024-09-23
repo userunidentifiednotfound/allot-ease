@@ -3,28 +3,15 @@
    <head>
       <meta charset="utf-8">
       <title>Allot-Ease</title>
+      <link rel="icon" href="/assests/image.jpg" type="image/x-icon">
       <link rel="stylesheet" href="/css/login.css">
-      <link rel="stylesheet" href="/css/navigation.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-      <script>
-         function validateLogin(event) {
-            event.preventDefault(); // Prevent the form from submitting
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            // Validate credentials
-            if (email === "allotease" && password === "varun") {
-               window.location.href = "admin.html"; // Redirect to admin panel
-            } else {
-               alert("Incorrect username or password. Please try again.");
-            }
-         }
-      </script>
    </head>
    <body>
       <nav>
-         <div class="logo">Allot-Ease</div>
+         <div class="logo">
+            <img src="/assests/ALLOT-EASE.png" width="auto" height="55px">
+         </div>
          <ul>
             <li><a href="#">Home</a></li>
             <li><a href="studentregistration.html">About</a></li>
@@ -55,5 +42,6 @@
             </div>
          </form>
       </div>
+      <script src="/js/login.js"></script>
    </body>
 </html>
